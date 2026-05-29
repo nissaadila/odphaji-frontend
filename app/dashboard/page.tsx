@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthGuard } from "@/components/auth-guard";
 import {
@@ -38,7 +39,7 @@ function formatRupiah(value: string | number): string {
 
 const tanggalFormatter = new Intl.DateTimeFormat("id-ID", {
   day: "2-digit",
-  month: "long",
+  month: "short",
   year: "numeric",
 });
 
@@ -47,19 +48,11 @@ function formatTanggal(iso: string): string {
   return Number.isNaN(d.getTime()) ? iso : tanggalFormatter.format(d);
 }
 
-const STATUS_PENDEK: Record<Estimasi["status"], string> = {
-  BELUM_DAFTAR_PORSI: "Belum Daftar",
-  TERDAFTAR_PORSI: "Terdaftar",
-  LUNAS: "Lunas",
+const STATUS_LABEL: Record<Estimasi["status"], string> = {
+  BELUM_DAFTAR_PORSI: "BELUM DAFTAR PORSI",
+  TERDAFTAR_PORSI: "TERDAFTAR PORSI",
+  LUNAS: "LUNAS",
 };
-
-const navItems: { label: string; icon: string; active?: boolean }[] = [
-  { label: "Dashboard", icon: "dashboard", active: true },
-  { label: "Setoran", icon: "savings" },
-  { label: "Riwayat Transaksi", icon: "history" },
-  { label: "Profil", icon: "person" },
-  { label: "Bantuan", icon: "help" },
-];
 
 function Dashboard() {
   const router = useRouter();
@@ -115,99 +108,113 @@ function Dashboard() {
   }
 
   const namaDepan = me?.nasabah.nama.split(" ")[0] || "Nasabah";
-  const inisial = namaDepan.charAt(0).toUpperCase();
   const tabungan = me?.tabungan ?? null;
 
   const bpih = estimasi?.asumsi.bpih ?? 50_000_000;
+  const setoranAwalPorsi = estimasi?.asumsi.setoranAwalPorsi ?? 25_000_000;
   const saldoNum = tabungan ? Number(tabungan.saldo) : 0;
-  const persen = Math.min(100, Math.max(0, Math.round((saldoNum / bpih) * 100)));
+  const persen = Math.min(100, Math.max(0, (saldoNum / bpih) * 100));
+  const persenPorsi = Math.min(100, (setoranAwalPorsi / bpih) * 100);
 
   return (
-    <div className="relative flex min-h-screen w-full bg-background">
-      {/* Sidebar */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-outline-variant bg-surface p-4 md:flex">
-        <div className="flex items-center gap-3 border-b border-outline-variant p-4">
-          <div className="rounded-lg bg-primary p-2 text-on-primary">
-            <span className="material-symbols-outlined">mosque</span>
+    <div className="flex min-h-screen flex-col bg-background font-body-md text-on-background">
+      {/* TopAppBar */}
+      <header className="top-0 z-50 w-full border-b border-outline-variant bg-surface shadow-sm">
+        <div className="mx-auto flex h-20 w-full max-w-[1200px] items-center justify-between px-container-padding-desktop">
+          {/* Brand */}
+          <div className="flex items-center gap-2">
+            <span className="font-headline-md text-headline-md font-bold text-primary">
+              🕋 Tabungan Haji ODP
+            </span>
           </div>
-          <h1 className="text-lg font-bold text-on-surface">Haji ODP</h1>
-        </div>
-        <nav className="mt-6 flex flex-1 flex-col gap-2">
-          {navItems.map((item) => (
+          {/* Navigation (desktop) */}
+          <nav className="hidden gap-8 md:flex">
             <a
-              key={item.label}
+              className="border-b-2 border-primary pb-1 font-label-md text-label-md font-bold text-primary transition-all hover:bg-surface-container-low"
               href="#"
-              className={
-                item.active
-                  ? "flex items-center gap-3 rounded-lg bg-primary-container px-4 py-2.5 font-medium text-on-primary-container"
-                  : "flex items-center gap-3 rounded-lg px-4 py-2.5 text-on-surface-variant transition-colors hover:bg-surface-variant"
-              }
             >
-              <span className="material-symbols-outlined">{item.icon}</span>
-              <span>{item.label}</span>
+              Dashboard
             </a>
-          ))}
-        </nav>
-        <div className="mt-auto">
-          <button
-            onClick={handleLogout}
-            disabled={keluar}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-on-surface-variant transition-colors hover:bg-surface-variant disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined">logout</span>
-            <span>{keluar ? "Keluar..." : "Keluar"}</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-6 md:p-8">
-        {/* Header */}
-        <header className="mb-8 flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-on-background">
-              Selamat Datang, {namaDepan}
-            </h2>
-            <p className="mt-1 text-on-surface-variant">
-              Berikut adalah ringkasan tabungan haji Anda.
-            </p>
-          </div>
+            <a
+              className="font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
+              href="#"
+            >
+              Mutasi
+            </a>
+            <a
+              className="font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
+              href="#"
+            >
+              Estimasi
+            </a>
+          </nav>
+          {/* Actions */}
           <div className="flex items-center gap-4">
             <button
-              aria-label="Notifikasi"
-              className="relative rounded-full p-2 transition-colors hover:bg-surface-variant"
+              aria-label="notifications"
+              className="text-on-surface-variant transition-colors hover:text-primary"
             >
-              <span className="material-symbols-outlined text-on-surface-variant">
+              <span
+                className="material-symbols-outlined"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
                 notifications
               </span>
-              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-error" />
             </button>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container font-bold text-on-primary-container">
-              {inisial}
-            </div>
+            <button
+              aria-label="account_circle"
+              className="text-on-surface-variant transition-colors hover:text-primary"
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
+                account_circle
+              </span>
+            </button>
+            <button
+              onClick={handleLogout}
+              disabled={keluar}
+              className="hidden font-label-md text-label-md text-error transition-opacity hover:opacity-80 disabled:opacity-50 md:block"
+            >
+              {keluar ? "Keluar..." : "Logout"}
+            </button>
           </div>
-        </header>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto flex w-full max-w-[1200px] flex-grow flex-col gap-section-gap px-container-padding-mobile py-section-gap md:px-container-padding-desktop">
+        {/* Welcome */}
+        <section>
+          <h1 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface md:font-headline-lg md:text-headline-lg">
+            Assalamualaikum, {namaDepan} 👋
+          </h1>
+          <p className="mt-stack-sm font-body-md text-body-md text-on-surface-variant">
+            Selamat datang kembali di Tabungan Haji Anda.
+          </p>
+        </section>
 
         {/* Loading */}
         {loading && (
-          <div className="flex items-center justify-center gap-3 rounded-xl border border-outline-variant bg-surface p-6 text-on-surface-variant">
+          <div className="flex items-center justify-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-stack-lg text-on-surface-variant shadow-sm">
             <span className="material-symbols-outlined animate-spin">
               progress_activity
             </span>
-            <span>Memuat data...</span>
+            <span className="font-body-md text-body-md">Memuat data...</span>
           </div>
         )}
 
         {/* Error */}
         {!loading && error && (
-          <div className="flex flex-col items-start gap-3 rounded-xl border border-error/30 bg-error-container p-6 text-on-error-container sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col items-start gap-stack-md rounded-xl border border-error/30 bg-error-container p-stack-lg text-on-error-container shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined">error</span>
-              <span>{error}</span>
+              <span className="font-body-md text-body-md">{error}</span>
             </div>
             <button
               onClick={muat}
-              className="rounded-lg bg-error px-4 py-2 text-sm font-medium text-on-error transition-opacity hover:opacity-90"
+              className="rounded-lg bg-error px-4 py-2 font-label-md text-label-md text-on-error transition-opacity hover:opacity-90"
             >
               Coba Lagi
             </button>
@@ -216,165 +223,287 @@ function Dashboard() {
 
         {/* Belum punya tabungan */}
         {!loading && !error && !tabungan && (
-          <div className="flex flex-col items-center gap-3 rounded-xl border border-outline-variant bg-surface p-12 text-center">
+          <div className="flex flex-col items-center gap-stack-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-section-gap text-center shadow-sm">
             <span className="material-symbols-outlined text-5xl text-primary-container">
               account_balance_wallet
             </span>
-            <h3 className="text-xl font-bold text-on-surface">
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">
               Anda belum memiliki Tabungan Haji
-            </h3>
-            <p className="max-w-md text-on-surface-variant">
+            </h2>
+            <p className="max-w-md font-body-md text-body-md text-on-surface-variant">
               Buka tabungan haji untuk mulai merencanakan keberangkatan ibadah
               Anda.
             </p>
           </div>
         )}
 
-        {/* Konten utama */}
+        {/* Konten utama (punya tabungan) */}
         {!loading && !error && tabungan && (
           <>
-            {/* Stats Grid */}
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div className="rounded-xl border border-outline-variant bg-surface p-6">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-primary-container p-3 text-on-primary-container">
-                    <span className="material-symbols-outlined">
-                      account_balance_wallet
-                    </span>
-                  </div>
+            {/* Key Cards */}
+            <section className="grid grid-cols-1 gap-gutter md:grid-cols-2">
+              {/* Balance Card */}
+              <div className="relative overflow-hidden rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-stack-lg shadow-sm">
+                <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary-container opacity-10 blur-2xl" />
+                <div className="relative z-10 mb-stack-md flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-on-surface-variant">Total Saldo</p>
-                    <p className="text-2xl font-bold text-on-surface">
-                      {formatRupiah(tabungan.saldo)}
+                    <p className="font-label-sm text-label-sm text-on-surface-variant">
+                      Saldo Tabungan Haji
                     </p>
+                    <h2 className="mt-stack-sm font-headline-xl-mobile text-headline-xl-mobile text-primary md:font-headline-xl md:text-headline-xl">
+                      {formatRupiah(tabungan.saldo)}
+                    </h2>
+                  </div>
+                  <span className="material-symbols-outlined text-4xl text-primary-container opacity-80">
+                    account_balance_wallet
+                  </span>
+                </div>
+                <div className="relative z-10 mt-stack-lg flex flex-col items-start justify-between gap-stack-sm border-t border-outline-variant/50 pt-stack-md sm:flex-row sm:items-center">
+                  <div>
+                    <p className="font-label-sm text-label-sm text-on-surface-variant">
+                      No. Rekening
+                    </p>
+                    <p className="font-body-sm text-body-sm font-medium text-on-surface">
+                      {tabungan.nomorRekening}
+                    </p>
+                  </div>
+                  <div className="rounded-full bg-primary-container/10 px-3 py-1">
+                    <span className="font-label-sm text-label-sm font-semibold text-primary-container">
+                      {tabungan.status}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-outline-variant bg-surface p-6">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-secondary-container p-3 text-on-secondary-container">
-                    <span className="material-symbols-outlined">
-                      flight_takeoff
+
+              {/* Status Porsi Card */}
+              <div className="relative overflow-hidden rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-stack-lg shadow-sm">
+                <div className="absolute -bottom-8 -left-8 h-40 w-40 rounded-full bg-secondary-container opacity-20 blur-2xl" />
+                <div className="relative z-10 mb-stack-md flex items-start justify-between">
+                  <div>
+                    <p className="font-label-sm text-label-sm text-on-surface-variant">
+                      Status Pendaftaran
+                    </p>
+                    <div className="mt-stack-sm flex items-center gap-2">
+                      <span
+                        className="material-symbols-outlined text-secondary-fixed-dim"
+                        style={{ fontVariationSettings: "'FILL' 1" }}
+                      >
+                        check_circle
+                      </span>
+                      <h3 className="font-headline-md text-headline-md text-on-secondary-container">
+                        {estimasi ? STATUS_LABEL[estimasi.status] : "-"}
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-secondary-container/20 p-2">
+                    <span className="material-symbols-outlined text-on-secondary-container">
+                      mosque
                     </span>
                   </div>
+                </div>
+                <div className="relative z-10 mt-stack-lg grid grid-cols-2 gap-gutter border-t border-outline-variant/50 pt-stack-md">
                   <div>
-                    <p className="text-sm text-on-surface-variant">
+                    <p className="font-label-sm text-label-sm text-on-surface-variant">
                       Estimasi Keberangkatan
                     </p>
-                    <p className="text-2xl font-bold text-on-surface">
-                      {estimasi?.estimasiTahunBerangkat ?? "-"}
+                    <p className="font-headline-sm text-headline-sm text-on-surface">
+                      {estimasi?.estimasiTahunBerangkat
+                        ? `Tahun ${estimasi.estimasiTahunBerangkat}`
+                        : "Belum tersedia"}
                     </p>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-xl border border-outline-variant bg-surface p-6">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-tertiary-container p-3 text-on-tertiary-container">
-                    <span className="material-symbols-outlined">trending_up</span>
                   </div>
                   <div>
-                    <p className="text-sm text-on-surface-variant">Status Porsi</p>
-                    <p className="text-2xl font-bold text-on-surface">
-                      {estimasi ? STATUS_PENDEK[estimasi.status] : "-"}
+                    <p className="font-label-sm text-label-sm text-on-surface-variant">
+                      Masa Tunggu
+                    </p>
+                    <p className="font-body-md text-body-md font-medium text-on-surface-variant">
+                      {estimasi ? `~${estimasi.waktuTungguTahun} Tahun` : "-"}
                     </p>
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* Progress & Transactions */}
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-              {/* Progress */}
-              <div className="rounded-xl border border-outline-variant bg-surface p-6 lg:col-span-2">
-                <h3 className="mb-4 text-xl font-bold text-on-surface">
-                  Progres Menuju Keberangkatan
-                </h3>
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium text-on-surface-variant">
-                    Saldo Saat Ini
-                  </span>
-                  <span className="text-sm font-bold text-primary">
-                    {formatRupiah(tabungan.saldo)} / {formatRupiah(bpih)}
-                  </span>
+            {/* Progress */}
+            <section className="rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-stack-lg shadow-sm">
+              <div className="mb-stack-md flex flex-col justify-between gap-stack-sm md:flex-row md:items-end">
+                <div>
+                  <h3 className="font-headline-sm text-headline-sm text-on-surface">
+                    Progress Menuju Pelunasan
+                  </h3>
+                  <p className="mt-1 font-body-sm text-body-sm text-on-surface-variant">
+                    Target BPIH: {formatRupiah(bpih)}
+                  </p>
                 </div>
-                <div className="h-4 w-full rounded-full bg-surface-variant">
-                  <div
-                    className="h-4 rounded-full bg-primary"
-                    style={{ width: `${persen}%` }}
-                  />
-                </div>
-                <p className="mt-2 text-sm text-on-surface-variant">
-                  Anda telah mencapai {persen}% dari target setoran pelunasan
-                  BPIH.
-                </p>
-
-                <div className="mt-6 border-t border-outline-variant pt-6">
-                  <h4 className="mb-4 font-bold text-on-surface">Aksi Cepat</h4>
-                  <div className="flex flex-wrap gap-4">
-                    <button className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-on-primary transition-all hover:bg-opacity-90">
-                      <span className="material-symbols-outlined">add_card</span>
-                      <span>Setor Dana</span>
-                    </button>
-                    <button className="flex items-center gap-2 rounded-lg bg-surface-variant px-4 py-2 font-medium text-on-surface-variant transition-all hover:bg-opacity-80">
-                      <span className="material-symbols-outlined">calculate</span>
-                      <span>Estimasi</span>
-                    </button>
-                  </div>
+                <div className="text-right">
+                  <span className="font-headline-md text-headline-md text-primary">
+                    {Math.round(persen)}%
+                  </span>
                 </div>
               </div>
+              {/* Progress Bar */}
+              <div className="relative h-4 w-full overflow-hidden rounded-full bg-surface-container-highest">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-primary-fixed-dim to-primary"
+                  style={{ width: `${persen}%` }}
+                />
+                <div
+                  className="absolute bottom-0 top-0 z-10 w-[2px] bg-secondary-fixed"
+                  style={{ left: `${persenPorsi}%` }}
+                />
+                <div
+                  className="absolute top-1/2 z-20 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary-fixed shadow-sm"
+                  style={{ left: `${persenPorsi}%` }}
+                  title="Setoran Awal (Porsi)"
+                />
+              </div>
+              <div className="mt-2 flex justify-between">
+                <span className="font-label-sm text-label-sm text-on-surface-variant">
+                  Rp 0
+                </span>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">
+                  {formatRupiah(setoranAwalPorsi)} (Porsi)
+                </span>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">
+                  {formatRupiah(bpih)}
+                </span>
+              </div>
+            </section>
 
-              {/* Recent Transactions */}
-              <div className="rounded-xl border border-outline-variant bg-surface p-6">
-                <h3 className="mb-4 text-xl font-bold text-on-surface">
-                  Transaksi Terkini
+            {/* Quick Actions */}
+            <section className="flex flex-wrap justify-center gap-gutter md:justify-start">
+              <Link
+                href="/setor"
+                className="flex items-center gap-2 rounded-lg bg-primary-container px-6 py-3 font-label-md text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary"
+              >
+                <span className="material-symbols-outlined text-sm">add</span> Setor
+                Dana
+              </Link>
+              <button className="flex items-center gap-2 rounded-lg border border-primary-container bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low">
+                <span className="material-symbols-outlined text-sm">
+                  receipt_long
+                </span>{" "}
+                Lihat Mutasi
+              </button>
+              <button className="flex items-center gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low">
+                <span className="material-symbols-outlined text-sm">
+                  calendar_month
+                </span>{" "}
+                Estimasi Haji
+              </button>
+            </section>
+
+            {/* Recent Transactions */}
+            <section className="overflow-hidden rounded-xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm">
+              <div className="flex items-center justify-between border-b border-outline-variant/50 p-stack-lg">
+                <h3 className="font-headline-sm text-headline-sm text-on-surface">
+                  Transaksi Terakhir
                 </h3>
+                <a
+                  className="font-label-md text-label-md text-primary hover:underline"
+                  href="#"
+                >
+                  Lihat Semua
+                </a>
+              </div>
+              <div className="overflow-x-auto">
                 {transaksi.length === 0 ? (
-                  <p className="text-sm text-on-surface-variant">
+                  <p className="p-stack-lg font-body-sm text-body-sm text-on-surface-variant">
                     Belum ada transaksi.
                   </p>
                 ) : (
-                  <div className="space-y-4">
-                    {transaksi.map((t) => {
-                      const kredit = t.jenis === "SETOR";
-                      return (
-                        <div key={t.id} className="flex items-center gap-4">
-                          <div
-                            className={`rounded-full p-2 ${
-                              kredit
-                                ? "bg-primary-container text-on-primary-container"
-                                : "bg-secondary-container text-on-secondary-container"
-                            }`}
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="bg-surface-container-low">
+                        <th className="p-4 font-label-sm text-label-sm uppercase text-on-surface-variant">
+                          Tanggal
+                        </th>
+                        <th className="p-4 font-label-sm text-label-sm uppercase text-on-surface-variant">
+                          Jenis
+                        </th>
+                        <th className="p-4 text-right font-label-sm text-label-sm uppercase text-on-surface-variant">
+                          Nominal
+                        </th>
+                        <th className="hidden p-4 text-right font-label-sm text-label-sm uppercase text-on-surface-variant sm:table-cell">
+                          Saldo
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-outline-variant/30">
+                      {transaksi.map((t) => {
+                        const kredit = t.jenis === "SETOR";
+                        return (
+                          <tr
+                            key={t.id}
+                            className="transition-colors hover:bg-surface-container-lowest/50"
                           >
-                            <span className="material-symbols-outlined">
-                              {kredit ? "arrow_upward" : "arrow_downward"}
-                            </span>
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium text-on-surface">
-                              {kredit ? "Setoran" : t.jenis}
-                            </p>
-                            <p className="text-sm text-on-surface-variant">
+                            <td className="p-4 font-body-sm text-body-sm text-on-surface">
                               {formatTanggal(t.waktu)}
-                            </p>
-                          </div>
-                          <p
-                            className={`font-bold ${
-                              kredit ? "text-primary" : "text-error"
-                            }`}
-                          >
-                            {kredit ? "+ " : "- "}
-                            {formatRupiah(t.nominal)}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`material-symbols-outlined text-sm ${
+                                    kredit ? "text-primary" : "text-error"
+                                  }`}
+                                >
+                                  {kredit ? "arrow_downward" : "arrow_upward"}
+                                </span>
+                                <span className="font-body-sm text-body-sm text-on-surface">
+                                  {kredit ? "Setoran" : t.jenis}
+                                </span>
+                              </div>
+                            </td>
+                            <td
+                              className={`p-4 text-right font-body-sm text-body-sm font-medium ${
+                                kredit ? "text-primary" : "text-error"
+                              }`}
+                            >
+                              {kredit ? "+ " : "- "}
+                              {formatRupiah(t.nominal)}
+                            </td>
+                            <td className="hidden p-4 text-right font-body-sm text-body-sm text-on-surface-variant sm:table-cell">
+                              {formatRupiah(t.saldoSesudah)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 )}
               </div>
-            </div>
+            </section>
           </>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="mt-auto w-full border-t border-outline-variant bg-surface-container">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center justify-between gap-stack-md px-container-padding-desktop py-section-gap md:flex-row">
+          <div className="flex flex-col items-center gap-stack-sm text-center md:items-start md:text-left">
+            <span className="font-headline-sm text-headline-sm font-semibold text-primary">
+              Tabungan Haji ODP
+            </span>
+            <p className="font-body-sm text-body-sm text-on-surface">
+              © 2024 Tabungan Haji ODP. Terdaftar dan Diawasi oleh OJK. Peserta
+              Penjaminan LPS.
+            </p>
+          </div>
+          <nav className="flex flex-wrap justify-center gap-gutter">
+            {["Syarat & Ketentuan", "Kebijakan Privasi", "Hubungi Kami", "Bantuan"].map(
+              (l) => (
+                <a
+                  key={l}
+                  className="rounded font-label-sm text-label-sm text-on-surface-variant underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary focus:ring-2 focus:ring-primary"
+                  href="#"
+                >
+                  {l}
+                </a>
+              ),
+            )}
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

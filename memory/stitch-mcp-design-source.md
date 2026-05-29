@@ -9,8 +9,10 @@ Saat user bilang "sesuai MCP", yang dimaksud adalah desain di **Stitch MCP** (to
 
 - Project: `Aplikasi Tabungan Haji Digital`, id `4803069294910973474` (design system "Islamic Wealth & Hajj Banking" — emerald `#003527`/`#064e3b` + gold `#d4af37`, font Geist+Inter).
 - Screen → halaman:
-  - `73b688f7dfb84bcc84bc622d4780d6d5` = **Dashboard** (customer) → `app/dashboard/page.tsx`. PENTING: screen Stitch sering di-update user. Per update terakhir 2026-05-29 layoutnya **SIDEBAR kiri** (brand "Haji ODP", nav Dashboard/Setoran/Riwayat Transaksi/Profil/Bantuan + Keluar) + main: header "Selamat Datang", 3 stat card (Total Saldo / Estimasi Keberangkatan / Status Porsi), Progres Menuju Keberangkatan (col-span-2) + Transaksi Terkini. Selalu RE-DOWNLOAD htmlCode tiap diminta, jangan andalkan ingatan layout.
-  - `8a6018d059604995b03f13dbf1a28063` = **Registrasi** → `app/register/page.tsx`. Per update terakhir: header (logo + nav Beranda/Layanan/Tentang Kami/Kontak) + kartu tengah "Buat Akun Baru" (Nama, NIK, Email, Nomor Telepon) — BUKAN split-screen branding seperti `referensi/register.html` lama.
+  - `73b688f7dfb84bcc84bc622d4780d6d5` = **Dashboard** (customer) → `app/dashboard/page.tsx`. Layout (verified via screenshot 2026-05-29): **TOP-NAVBAR** (brand + nav Dashboard/Mutasi/Estimasi + notif/Logout) → "Assalamualaikum" → 2 kartu (Saldo + Status Pendaftaran) → Progress Menuju Pelunasan (bar + marker porsi emas) → quick actions (Setor Dana/Lihat Mutasi/Estimasi) → tabel Transaksi Terakhir → footer.
+  - `8a6018d059604995b03f13dbf1a28063` = **Registrasi** → `app/register/page.tsx`. Layout (verified via screenshot 2026-05-29): **SPLIT-SCREEN** — kiri panel hijau (gambar Kaaba, "Niat Suci, Langkah Pasti.", OJK), kanan form (NIK, Nama, Email, Nomor HP +62) + info box. Sama dengan `referensi/register.html`.
+
+  CATATAN PENTING (pelajaran): `htmlCode.downloadUrl` & `screenshot.downloadUrl` dari `get_screen` adalah versi yang TERSIMPAN di Stitch (kadang dianggap "cache lama" oleh user). Untuk tahu desain SEBENARNYA, **download `screenshot.downloadUrl` (PNG) lalu LIHAT dengan Read tool** — itu ground truth. JANGAN pernah menulis desain dari ingatan saat download gagal/kosong; verifikasi byte > 0 dulu.
   - `c0738de32e964233be83e59cf3613bee` = Admin Report (BUKAN dashboard customer)
   - `5fed61c672d641e983afb6329e2a3e0d` = Login → `app/login/page.tsx`
   - `73e452ff1b6141eeae47cc2459853ba4` = Setor Dana
