@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tabungan Haji ODP - Estimasi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#ffe088",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#745c00",
+                        "inverse-on-surface": "#edf0ff",
+                        "tertiary": "#003525",
+                        "surface-container-low": "#f1f3ff",
+                        "on-surface-variant": "#404944",
+                        "surface-container-highest": "#dce2f7",
+                        "on-tertiary-fixed-variant": "#00513b",
+                        "on-primary-container": "#80bea6",
+                        "primary-container": "#064e3b",
+                        "surface-variant": "#dce2f7",
+                        "secondary-container": "#fed65b",
+                        "surface": "#f9f9ff",
+                        "on-background": "#141b2b",
+                        "outline-variant": "#bfc9c3",
+                        "surface-tint": "#2b6954",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#004e39",
+                        "primary-fixed-dim": "#95d3ba",
+                        "inverse-surface": "#293040",
+                        "primary": "#003527",
+                        "background": "#f9f9ff",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#8bd6b6",
+                        "on-tertiary-fixed": "#002116",
+                        "outline": "#707974",
+                        "on-secondary-fixed-variant": "#574500",
+                        "inverse-primary": "#95d3ba",
+                        "surface-container-high": "#e1e8fd",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#a6f2d1",
+                        "surface-container": "#e9edff",
+                        "on-surface": "#141b2b",
+                        "on-tertiary-container": "#75c0a1",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#002117",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d3daef",
+                        "on-primary-fixed-variant": "#0b513d",
+                        "primary-fixed": "#b0f0d6",
+                        "surface-bright": "#f9f9ff",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-error-container": "#93000a",
+                        "secondary": "#735c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "40px",
+                        "gutter": "16px",
+                        "stack-sm": "4px",
+                        "stack-md": "12px",
+                        "container-padding-desktop": "24px",
+                        "base": "8px",
+                        "container-padding-mobile": "16px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-xl": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "headline-xl-mobile": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "headline-sm": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "30px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-xl-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none sticky top-0 z-50 w-full">
+<div class="flex justify-between items-center w-full px-container-padding-desktop max-w-[1200px] mx-auto h-20">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+                🕋 Tabungan Haji ODP
+            </div>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-all px-3 py-2 rounded-md" href="#">
+                    Dashboard
+                </a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-all px-3 py-2 rounded-md" href="#">
+                    Mutasi
+                </a>
+<a aria-current="page" class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-bold hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-all px-3 py-2 rounded-md opacity-80 scale-95 transition-transform" href="#">
+                    Estimasi
+                </a>
+</nav>
+<div class="flex items-center gap-4">
+<button aria-label="Notifications" class="text-on-surface-variant hover:text-primary transition-colors focus:ring-2 focus:ring-primary rounded-full p-2">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="Account" class="text-on-surface-variant hover:text-primary transition-colors focus:ring-2 focus:ring-primary rounded-full p-2">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="hidden md:block text-primary font-label-md text-label-md font-semibold px-4 py-2 rounded-full border border-primary hover:bg-primary-container hover:text-on-primary-container transition-colors">
+                    Logout
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop py-section-gap flex flex-col gap-section-gap">
+<!-- Header & Status -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-center gap-stack-lg">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-stack-sm">Estimasi Keberangkatan</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Pantau progres dan perkiraan jadwal ibadah haji Anda.</p>
+</div>
+<div class="bg-secondary-fixed/20 border border-secondary-fixed rounded-full px-6 py-3 flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-md text-label-md text-on-secondary-container">TERDAFTAR PORSI</span>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Estimation Details (Left Column) -->
+<div class="lg:col-span-1 flex flex-col gap-6">
+<!-- Key Info Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 p-6 flex flex-col justify-center relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-32 h-32 bg-primary-container/10 rounded-full blur-2xl group-hover:bg-primary-container/20 transition-all"></div>
+<div class="flex items-center gap-3 mb-4 z-10">
+<div class="p-3 bg-primary-container/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">calendar_month</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Estimasi Tahun Berangkat</h2>
+</div>
+<div class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary font-bold z-10">
+                        2051
+                    </div>
+<div class="mt-4 flex items-center gap-2 text-on-surface-variant z-10">
+<span class="material-symbols-outlined text-sm">hourglass_empty</span>
+<span class="font-body-sm text-body-sm">Perkiraan Masa Tunggu: ± 25 tahun</span>
+</div>
+</div>
+<!-- Action Card -->
+<div class="bg-primary rounded-xl shadow-md p-6 text-on-primary flex flex-col justify-between relative overflow-hidden">
+<div class="absolute right-0 bottom-0 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined" style="font-size: 120px;">payments</span>
+</div>
+<div class="z-10 mb-6">
+<h3 class="font-headline-sm text-headline-sm mb-2">Persiapkan Pelunasan</h3>
+<p class="font-body-sm text-body-sm text-primary-fixed-dim">Setor rutin untuk memenuhi estimasi biaya BPIH.</p>
+</div>
+<button class="z-10 bg-secondary-container text-on-secondary-container font-label-md text-label-md py-3 px-6 rounded-lg w-full flex justify-center items-center gap-2 hover:bg-secondary-fixed transition-colors shadow-sm">
+<span class="material-symbols-outlined">add_circle</span>
+                        Setor Lagi untuk Lunas
+                    </button>
+</div>
+</div>
+<!-- Financial Breakdown (Middle & Right Column) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 p-6 md:p-8 flex flex-col">
+<div class="flex items-center justify-between mb-8 pb-4 border-b border-outline-variant/30">
+<h2 class="font-headline-md text-headline-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+                        Ringkasan Finansial
+                    </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+<!-- Current Balance -->
+<div class="flex flex-col gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total Saldo Saat Ini</span>
+<span class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface font-bold">
+                            Rp 27.500.000
+                        </span>
+</div>
+<!-- Shortfall -->
+<div class="flex flex-col gap-2 p-4 bg-error-container/30 rounded-lg border border-error-container">
+<span class="font-label-sm text-label-sm text-error uppercase tracking-wider">Kekurangan Pelunasan</span>
+<span class="font-headline-md text-headline-md text-error font-semibold">
+                            Rp 22.500.000
+                        </span>
+</div>
+</div>
+<!-- Breakdown List -->
+<div class="flex flex-col gap-4 mt-auto">
+<div class="flex justify-between items-center py-3 border-b border-outline-variant/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Setoran Awal Porsi</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-medium">Rp 25.000.000</span>
+</div>
+<div class="flex justify-between items-center py-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline text-sm">flag</span>
+<span class="font-body-md text-body-md text-on-surface">Estimasi Total Pelunasan (BPIH)</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-medium">Rp 50.000.000</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Timeline / Progress Roadmap -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 p-6 md:p-8 mt-4">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-8">Peta Perjalanan Haji</h2>
+<div class="relative w-full py-4">
+<!-- Track Background -->
+<div class="absolute top-1/2 left-0 w-full h-2 bg-surface-variant rounded-full -translate-y-1/2"></div>
+<!-- Progress Fill -->
+<div class="absolute top-1/2 left-0 w-[10%] h-2 bg-gradient-to-r from-primary to-primary-container rounded-full -translate-y-1/2"></div>
+<!-- Milestones -->
+<div class="relative flex justify-between items-center w-full z-10">
+<!-- M1: Registration -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-md ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-on-primary text-sm">how_to_reg</span>
+</div>
+<div class="text-center w-24">
+<div class="font-label-sm text-label-sm text-primary">Daftar ODP</div>
+<div class="font-body-sm text-body-sm text-outline text-[10px]">Selesai</div>
+</div>
+</div>
+<!-- M2: Porsi Met -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center shadow-md ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-on-secondary-container text-sm">confirmation_number</span>
+</div>
+<div class="text-center w-24">
+<div class="font-label-sm text-label-sm text-on-surface font-semibold">Dapat Porsi</div>
+<div class="font-body-sm text-body-sm text-outline text-[10px]">Selesai</div>
+</div>
+</div>
+<!-- M3: Pelunasan -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center shadow-sm ring-4 ring-surface-container-lowest border border-outline-variant">
+<span class="material-symbols-outlined text-outline text-sm">savings</span>
+</div>
+<div class="text-center w-24">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Lunas BPIH</div>
+<div class="font-body-sm text-body-sm text-outline text-[10px]">Estimasi 2050</div>
+</div>
+</div>
+<!-- M4: Departure -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center shadow-sm ring-4 ring-surface-container-lowest border border-outline-variant">
+<span class="material-symbols-outlined text-outline text-sm">flight_takeoff</span>
+</div>
+<div class="text-center w-24">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Berangkat</div>
+<div class="font-body-sm text-body-sm text-primary font-bold">2051</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-surface-container-low rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-outline mt-0.5 text-lg">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    * Estimasi keberangkatan didasarkan pada kuota nasional saat ini (221.000 jemaah/tahun) dan nomor porsi yang Anda miliki. Waktu tunggu dapat berubah sesuai kebijakan Pemerintah dan kuota tambahan.
+                </p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-surface-container dark:bg-surface-container-low mt-auto">
+<div class="bg-surface-container-low dark:bg-surface-container-lowest border-t border-outline-variant w-full py-section-gap px-container-padding-desktop max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-stack-md">
+<div class="flex flex-col gap-2 items-center md:items-start">
+<div class="font-headline-sm text-headline-sm font-semibold text-primary dark:text-primary-container">
+                    Tabungan Haji ODP
+                </div>
+<div class="font-body-sm text-body-sm text-on-surface dark:text-on-surface text-center md:text-left">
+                    © 2024 Tabungan Haji ODP. Terdaftar dan Diawasi oleh OJK. Peserta Penjaminan LPS.
+                </div>
+</div>
+<nav class="flex flex-wrap justify-center gap-4 md:gap-6 mt-4 md:mt-0">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">
+                    Syarat &amp; Ketentuan
+                </a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">
+                    Kebijakan Privasi
+                </a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">
+                    Hubungi Kami
+                </a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">
+                    Bantuan
+                </a>
+</nav>
+</div>
+</footer>
+</body></html>

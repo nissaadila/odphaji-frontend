@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Setor Dana - Tabungan Haji ODP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#ffe088",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#745c00",
+                        "inverse-on-surface": "#edf0ff",
+                        "tertiary": "#003525",
+                        "surface-container-low": "#f1f3ff",
+                        "on-surface-variant": "#404944",
+                        "surface-container-highest": "#dce2f7",
+                        "on-tertiary-fixed-variant": "#00513b",
+                        "on-primary-container": "#80bea6",
+                        "primary-container": "#064e3b",
+                        "surface-variant": "#dce2f7",
+                        "secondary-container": "#fed65b",
+                        "surface": "#f9f9ff",
+                        "on-background": "#141b2b",
+                        "outline-variant": "#bfc9c3",
+                        "surface-tint": "#2b6954",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#004e39",
+                        "primary-fixed-dim": "#95d3ba",
+                        "inverse-surface": "#293040",
+                        "primary": "#003527",
+                        "background": "#f9f9ff",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#8bd6b6",
+                        "on-tertiary-fixed": "#002116",
+                        "outline": "#707974",
+                        "on-secondary-fixed-variant": "#574500",
+                        "inverse-primary": "#95d3ba",
+                        "surface-container-high": "#e1e8fd",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#a6f2d1",
+                        "surface-container": "#e9edff",
+                        "on-surface": "#141b2b",
+                        "on-tertiary-container": "#75c0a1",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#002117",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d3daef",
+                        "on-primary-fixed-variant": "#0b513d",
+                        "primary-fixed": "#b0f0d6",
+                        "surface-bright": "#f9f9ff",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-error-container": "#93000a",
+                        "secondary": "#735c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "40px",
+                        "gutter": "16px",
+                        "stack-sm": "4px",
+                        "stack-md": "12px",
+                        "container-padding-desktop": "24px",
+                        "base": "8px",
+                        "container-padding-mobile": "16px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-xl": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "headline-xl-mobile": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "headline-sm": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "30px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-xl-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-container-padding-desktop max-w-[1200px] mx-auto h-20">
+<!-- Brand Logo -->
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim flex items-center gap-2">
+<span>🕋</span>
+<span>Tabungan Haji ODP</span>
+</div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-highest px-3 py-2 rounded-md" href="#">Dashboard</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-highest px-3 py-2 rounded-md" href="#">Mutasi</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md text-label-md hover:text-primary dark:hover:text-primary-fixed-dim transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-highest px-3 py-2 rounded-md" href="#">Estimasi</a>
+</nav>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<div class="flex gap-2">
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-all p-2 rounded-full active:opacity-80 active:scale-95">
+<span class="material-symbols-outlined icon-fill">account_circle</span>
+</button>
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-all p-2 rounded-full active:opacity-80 active:scale-95">
+<span class="material-symbols-outlined icon-fill">notifications</span>
+</button>
+</div>
+<button class="hidden md:block font-label-md text-label-md text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-all px-4 py-2 rounded-lg border border-outline-variant dark:border-outline">
+                    Logout
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto py-section-gap">
+<div class="max-w-2xl mx-auto">
+<!-- Header -->
+<div class="mb-stack-lg text-center">
+<h1 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary mb-stack-sm">Setor Dana ke Tabungan Haji</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Lanjutkan perjalanan suci Anda dengan mudah dan aman.</p>
+</div>
+<!-- Account Info Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant mb-stack-lg flex items-center justify-between">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Rekening Tujuan</p>
+<p class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
+                        8021 4455 90
+                    </p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Saldo Saat Ini</p>
+<p class="font-headline-sm text-headline-sm text-primary">Rp 27.500.000</p>
+</div>
+</div>
+<!-- Deposit Form -->
+<form class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant">
+<!-- Nominal Setoran -->
+<div class="mb-stack-lg">
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="nominal">Nominal Setoran</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="font-body-lg text-body-lg text-on-surface-variant">Rp</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-4 rounded-lg border-outline-variant focus:border-primary focus:ring focus:ring-primary/20 font-headline-md text-headline-md text-on-surface bg-surface transition-all placeholder:text-outline-variant/50" id="nominal" name="nominal" placeholder="2.500.000" type="text"/>
+</div>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span> Minimal setoran Rp 100.000
+                    </p>
+</div>
+<!-- Payment Method -->
+<div class="mb-stack-lg">
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm">Metode Pembayaran</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<label class="relative flex cursor-pointer rounded-lg border border-primary bg-surface-container-low p-4 shadow-sm focus:outline-none">
+<input checked="" class="sr-only" name="payment_method" type="radio" value="qris"/>
+<div class="flex w-full items-center justify-between">
+<div class="flex items-center">
+<div class="text-sm">
+<p class="font-headline-sm text-headline-sm text-on-surface">QRIS</p>
+<div class="text-body-sm text-on-surface-variant font-body-sm">Scan cepat &amp; instan</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary icon-fill">check_circle</span>
+</div>
+</label>
+<label class="relative flex cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest p-4 shadow-sm focus:outline-none hover:border-primary/50 transition-colors">
+<input class="sr-only" name="payment_method" type="radio" value="transfer"/>
+<div class="flex w-full items-center justify-between">
+<div class="flex items-center">
+<div class="text-sm">
+<p class="font-headline-sm text-headline-sm text-on-surface">Transfer Bank</p>
+<div class="text-body-sm text-on-surface-variant font-body-sm">Virtual Account</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">radio_button_unchecked</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Dynamic Preview -->
+<div class="bg-surface-container rounded-lg p-4 mb-stack-lg flex justify-between items-center border border-outline-variant/50">
+<span class="font-body-md text-body-md text-on-surface-variant">Estimasi saldo setelah setor:</span>
+<span class="font-headline-md text-headline-md text-primary-container" id="estimasiSaldo">Rp 30.000.000</span>
+</div>
+<!-- Action -->
+<button class="w-full bg-primary-container text-on-primary font-headline-sm text-headline-sm py-4 rounded-lg hover:bg-tertiary-container transition-colors shadow-sm focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none uppercase tracking-wider" type="button">
+                    KONFIRMASI SETOR
+                </button>
+</form>
+<!-- Security Footer -->
+<div class="mt-stack-md text-center">
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center justify-center gap-1">
+<span>🔒</span> Transaksi aman &amp; idempoten (anti duplikat).
+                </p>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-container-low w-full mt-auto bg-surface-container-low dark:bg-surface-container-lowest border-t border-outline-variant">
+<div class="w-full py-section-gap px-container-padding-desktop max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-stack-md">
+<div class="flex flex-col items-center md:items-start gap-stack-sm">
+<div class="font-headline-sm text-headline-sm font-semibold text-primary dark:text-primary-container">
+                    Tabungan Haji ODP
+                </div>
+<p class="font-body-sm text-body-sm text-on-surface dark:text-on-surface text-center md:text-left text-on-surface-variant">
+                    © 2024 Tabungan Haji ODP. Terdaftar dan Diawasi oleh OJK. Peserta Penjaminan LPS.
+                </p>
+</div>
+<nav class="flex flex-wrap justify-center gap-4">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">Syarat &amp; Ketentuan</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">Kebijakan Privasi</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">Hubungi Kami</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4 focus:ring-2 focus:ring-primary rounded-sm" href="#">Bantuan</a>
+</nav>
+</div>
+</footer>
+<script>
+        // Simple interactivity for radio buttons
+        const radios = document.querySelectorAll('input[name="payment_method"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                radios.forEach(r => {
+                    const label = r.closest('label');
+                    const icon = label.querySelector('.material-symbols-outlined');
+                    
+                    if(r.checked) {
+                        label.classList.remove('border-outline-variant', 'bg-surface-container-lowest');
+                        label.classList.add('border-primary', 'bg-surface-container-low');
+                        icon.textContent = 'check_circle';
+                        icon.classList.add('text-primary', 'icon-fill');
+                        icon.classList.remove('text-outline-variant');
+                    } else {
+                        label.classList.add('border-outline-variant', 'bg-surface-container-lowest');
+                        label.classList.remove('border-primary', 'bg-surface-container-low');
+                        icon.textContent = 'radio_button_unchecked';
+                        icon.classList.remove('text-primary', 'icon-fill');
+                        icon.classList.add('text-outline-variant');
+                    }
+                });
+            });
+        });
+    </script>
+</body></html>
