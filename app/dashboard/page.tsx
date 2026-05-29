@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { AuthGuard } from "@/components/auth-guard";
 import {
   ApiError,
+  bukaTabungan,
   getEstimasi,
   getMe,
   getMutasi,
+  getTabungan,
   logout,
   type Estimasi,
   type MeResult,
@@ -63,6 +65,8 @@ function Dashboard() {
   const [transaksi, setTransaksi] = useState<Transaksi[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [membuka, setMembuka] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const muat = useCallback(async () => {
     setLoading(true);
@@ -104,6 +108,39 @@ function Dashboard() {
       router.replace("/login");
     } finally {
       setKeluar(false);
+    }
+  }
+
+  // POST /tabungan-haji — buka tabungan haji baru untuk nasabah yang login.
+  async function handleBukaTabungan() {
+    if (!me || membuka) return;
+    setMembuka(true);
+    setError(null);
+    try {
+      await bukaTabungan(me.nasabah.id);
+      await muat();
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Gagal membuka tabungan haji. Silakan coba lagi.",
+      );
+    } finally {
+      setMembuka(false);
+    }
+  }
+
+  // GET /tabungan-haji/:id — muat ulang saldo terbaru.
+  async function refreshSaldo() {
+    if (!tabungan || refreshing) return;
+    setRefreshing(true);
+    try {
+      const terbaru = await getTabungan(tabungan.id);
+      setMe((prev) => (prev ? { ...prev, tabungan: terbaru } : prev));
+    } catch {
+      // diamkan: refresh manual, error sementara tidak perlu mengganggu UI
+    } finally {
+      setRefreshing(false);
     }
   }
 
@@ -234,6 +271,22 @@ function Dashboard() {
               Buka tabungan haji untuk mulai merencanakan keberangkatan ibadah
               Anda.
             </p>
+            <button
+              onClick={handleBukaTabungan}
+              disabled={membuka}
+              className="mt-stack-sm flex items-center gap-2 rounded-lg bg-primary-container px-6 py-3 font-label-md text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {membuka ? (
+                <span className="material-symbols-outlined animate-spin text-[20px]">
+                  progress_activity
+                </span>
+              ) : (
+                <span className="material-symbols-outlined text-[20px]">
+                  add
+                </span>
+              )}
+              {membuka ? "Membuka..." : "Buka Tabungan Haji"}
+            </button>
           </div>
         )}
 
@@ -254,9 +307,21 @@ function Dashboard() {
                       {formatRupiah(tabungan.saldo)}
                     </h2>
                   </div>
-                  <span className="material-symbols-outlined text-4xl text-primary-container opacity-80">
-                    account_balance_wallet
-                  </span>
+                  <button
+                    onClick={refreshSaldo}
+                    disabled={refreshing}
+                    aria-label="Muat ulang saldo"
+                    title="Muat ulang saldo"
+                    className="text-primary-container opacity-80 transition-opacity hover:opacity-100 disabled:opacity-50"
+                  >
+                    <span
+                      className={`material-symbols-outlined text-4xl ${
+                        refreshing ? "animate-spin" : ""
+                      }`}
+                    >
+                      {refreshing ? "progress_activity" : "refresh"}
+                    </span>
+                  </button>
                 </div>
                 <div className="relative z-10 mt-stack-lg flex flex-col items-start justify-between gap-stack-sm border-t border-outline-variant/50 pt-stack-md sm:flex-row sm:items-center">
                   <div>

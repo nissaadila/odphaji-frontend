@@ -379,6 +379,26 @@ export function getMe(): Promise<MeResult> {
   return authedFetch<MeResult>("/auth/me");
 }
 
+/**
+ * POST /tabungan-haji — buka/buat tabungan haji untuk nasabah.
+ * Backend menolak dengan DUPLICATE_ENTRY bila nasabah sudah punya tabungan,
+ * atau NASABAH_NOT_REGISTERED bila nasabah tidak ditemukan.
+ */
+export function bukaTabungan(nasabahId: string): Promise<Tabungan> {
+  return authedFetch<Tabungan>("/tabungan-haji", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nasabahId }),
+  });
+}
+
+/** GET /tabungan-haji/:id — lihat detail & saldo terbaru tabungan haji. */
+export function getTabungan(tabunganId: string): Promise<Tabungan> {
+  return authedFetch<Tabungan>(
+    `/tabungan-haji/${encodeURIComponent(tabunganId)}`,
+  );
+}
+
 /** GET /tabungan-haji/estimasi — status porsi & estimasi keberangkatan. */
 export function getEstimasi(tabunganId: string): Promise<Estimasi> {
   return authedFetch<Estimasi>(
