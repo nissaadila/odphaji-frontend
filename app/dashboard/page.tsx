@@ -172,12 +172,12 @@ function Dashboard() {
             >
               Dashboard
             </a>
-            <a
+            <Link
               className="font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
-              href="#"
+              href="/mutasi"
             >
               Mutasi
-            </a>
+            </Link>
             <a
               className="font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
               href="#"
@@ -444,12 +444,15 @@ function Dashboard() {
                 <span className="material-symbols-outlined text-sm">add</span> Setor
                 Dana
               </Link>
-              <button className="flex items-center gap-2 rounded-lg border border-primary-container bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low">
+              <Link
+                href="/mutasi"
+                className="flex items-center gap-2 rounded-lg border border-primary-container bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low"
+              >
                 <span className="material-symbols-outlined text-sm">
                   receipt_long
                 </span>{" "}
                 Lihat Mutasi
-              </button>
+              </Link>
               <button className="flex items-center gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low">
                 <span className="material-symbols-outlined text-sm">
                   calendar_month
@@ -464,12 +467,12 @@ function Dashboard() {
                 <h3 className="font-headline-sm text-headline-sm text-on-surface">
                   Transaksi Terakhir
                 </h3>
-                <a
+                <Link
                   className="font-label-md text-label-md text-primary hover:underline"
-                  href="#"
+                  href="/mutasi"
                 >
                   Lihat Semua
-                </a>
+                </Link>
               </div>
               <div className="overflow-x-auto">
                 {transaksi.length === 0 ? (

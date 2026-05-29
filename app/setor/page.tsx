@@ -125,12 +125,12 @@ function Setor() {
             >
               Dashboard
             </Link>
-            <a
+            <Link
               className="rounded-md px-3 py-2 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
-              href="#"
+              href="/mutasi"
             >
               Mutasi
-            </a>
+            </Link>
             <a
               className="rounded-md px-3 py-2 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
               href="#"
