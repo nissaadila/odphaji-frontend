@@ -66,12 +66,13 @@ export interface Estimasi {
 export interface Transaksi {
   id: string;
   tabunganId: string;
-  jenis: string; // "SETOR", dll.
+  jenis: string; // "SETOR" | "TARIK"
   nominal: string;
   saldoSebelum: string;
   saldoSesudah: string;
   referensi: string;
   metode: string | null;
+  catatan?: string | null;
   waktu: string;
 }
 
@@ -329,6 +330,19 @@ export function clearSession(): void {
 }
 
 /**
+ * Bersihkan sesi dan paksa redirect ke /login. Dipakai saat backend balas 401
+ * (token expired/revoked) atau saat token hilang di tengah request. Pakai
+ * `location.replace` agar tidak menumpuk history dan agar state React di-reset.
+ */
+function forceLogoutAndRedirect(): void {
+  clearSession();
+  if (typeof window === "undefined") return;
+  if (window.location.pathname !== "/login") {
+    window.location.replace("/login");
+  }
+}
+
+/**
  * Fetch ke endpoint yang butuh autentikasi: otomatis menyisipkan header
  * `Authorization: Bearer <token>`, parse JSON, dan melempar ApiError yang ramah
  * pengguna bila gagal (termasuk token kadaluarsa/di-revoke).
@@ -336,6 +350,7 @@ export function clearSession(): void {
 async function authedFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getToken();
   if (!token) {
+    forceLogoutAndRedirect();
     throw new ApiError(
       "UNAUTHORIZED",
       "Sesi Anda telah berakhir. Silakan login kembali.",
@@ -368,6 +383,7 @@ async function authedFetch<T>(path: string, init?: RequestInit): Promise<T> {
       res.status === 401
         ? "Sesi Anda telah berakhir. Silakan login kembali."
         : (data?.message ?? "Terjadi kesalahan. Silakan coba lagi.");
+    if (res.status === 401) forceLogoutAndRedirect();
     throw new ApiError(code, message, res.status);
   }
 
@@ -434,6 +450,33 @@ export function setorTabungan(
   );
 }
 
+export interface TarikInput {
+  nominal: number;
+  catatan?: string;
+}
+
+/**
+ * POST /tabungan-haji/:id/tarik — tarik dana dari tabungan haji.
+ * Nominal harus > 0 dan tidak melebihi saldo. Membuat Idempotency-Key
+ * unik tiap pemanggilan agar aman dari double-submit.
+ */
+export function tarikTabungan(
+  tabunganId: string,
+  input: TarikInput,
+): Promise<SetorResult> {
+  return authedFetch<SetorResult>(
+    `/tabungan-haji/${encodeURIComponent(tabunganId)}/tarik`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Idempotency-Key": crypto.randomUUID(),
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
 /**
  * GET /laporan/transaksi?bulan=YYYY-MM — laporan transaksi bulanan (admin).
  * Mengembalikan teks CSV mentah; melempar ApiError bila gagal (mis. 403 non-admin).
@@ -441,6 +484,7 @@ export function setorTabungan(
 export async function fetchLaporanCsv(bulan: string): Promise<string> {
   const token = getToken();
   if (!token) {
+    forceLogoutAndRedirect();
     throw new ApiError(
       "UNAUTHORIZED",
       "Sesi Anda telah berakhir. Silakan login kembali.",
@@ -464,6 +508,7 @@ export async function fetchLaporanCsv(bulan: string): Promise<string> {
 
   const text = await res.text();
   if (!res.ok) {
+    if (res.status === 401) forceLogoutAndRedirect();
     let code = "UNKNOWN_ERROR";
     let message = "Gagal mengambil laporan.";
     try {

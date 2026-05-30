@@ -50,10 +50,26 @@ function formatTanggal(iso: string): string {
   return Number.isNaN(d.getTime()) ? iso : tanggalFormatter.format(d);
 }
 
+function maskRekening(no: string): string {
+  if (!no) return "";
+  const last4 = no.slice(-4);
+  const hidden = "•".repeat(Math.max(0, no.length - 4));
+  return (hidden + last4).replace(/(.{4})/g, "$1 ").trim();
+}
+
+function formatRekening(no: string): string {
+  return no.replace(/(.{4})/g, "$1 ").trim();
+}
+
 const STATUS_LABEL: Record<Estimasi["status"], string> = {
   BELUM_DAFTAR_PORSI: "BELUM DAFTAR PORSI",
   TERDAFTAR_PORSI: "TERDAFTAR PORSI",
   LUNAS: "LUNAS",
+};
+
+const JENIS_LABEL: Record<string, string> = {
+  SETOR: "Setoran",
+  TARIK: "Penarikan",
 };
 
 function Dashboard() {
@@ -63,38 +79,55 @@ function Dashboard() {
   const [me, setMe] = useState<MeResult | null>(null);
   const [estimasi, setEstimasi] = useState<Estimasi | null>(null);
   const [transaksi, setTransaksi] = useState<Transaksi[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [meLoading, setMeLoading] = useState(true);
+  const [estimasiLoading, setEstimasiLoading] = useState(false);
+  const [mutasiLoading, setMutasiLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [membuka, setMembuka] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [tampilRekening, setTampilRekening] = useState(false);
 
   const muat = useCallback(async () => {
-    setLoading(true);
+    setMeLoading(true);
     setError(null);
+    let meData: MeResult;
     try {
-      const meData = await getMe();
+      meData = await getMe();
       setMe(meData);
-
-      if (meData.tabungan) {
-        const [est, mut] = await Promise.all([
-          getEstimasi(meData.tabungan.id),
-          getMutasi(meData.tabungan.id),
-        ]);
-        setEstimasi(est);
-        setTransaksi(mut.data);
-      } else {
-        setEstimasi(null);
-        setTransaksi([]);
-      }
     } catch (err) {
       setError(
         err instanceof ApiError
           ? err.message
           : "Gagal memuat data. Silakan coba lagi.",
       );
+      return;
     } finally {
-      setLoading(false);
+      setMeLoading(false);
     }
+
+    if (!meData.tabungan) {
+      setEstimasi(null);
+      setTransaksi([]);
+      return;
+    }
+
+    const tabunganId = meData.tabungan.id;
+    setEstimasiLoading(true);
+    setMutasiLoading(true);
+
+    void getEstimasi(tabunganId)
+      .then((est) => setEstimasi(est))
+      .catch(() => {
+        /* biarkan estimasi null; card menampilkan placeholder "-" */
+      })
+      .finally(() => setEstimasiLoading(false));
+
+    void getMutasi(tabunganId)
+      .then((mut) => setTransaksi(mut.data))
+      .catch(() => {
+        /* biarkan transaksi kosong; tabel menampilkan "Belum ada transaksi." */
+      })
+      .finally(() => setMutasiLoading(false));
   }, []);
 
   useEffect(() => {
@@ -161,7 +194,7 @@ function Dashboard() {
           {/* Brand */}
           <div className="flex items-center gap-2">
             <span className="font-headline-md text-headline-md font-bold text-primary">
-              🕋 Tabungan Haji ODP
+              🕋 BSI Tabungan Haji
             </span>
           </div>
           {/* Navigation (desktop) */}
@@ -178,12 +211,12 @@ function Dashboard() {
             >
               Mutasi
             </Link>
-            <a
+            <Link
               className="font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
-              href="#"
+              href="/estimasi"
             >
               Estimasi
-            </a>
+            </Link>
           </nav>
           {/* Actions */}
           <div className="flex items-center gap-4">
@@ -232,18 +265,8 @@ function Dashboard() {
           </p>
         </section>
 
-        {/* Loading */}
-        {loading && (
-          <div className="flex items-center justify-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-stack-lg text-on-surface-variant shadow-sm">
-            <span className="material-symbols-outlined animate-spin">
-              progress_activity
-            </span>
-            <span className="font-body-md text-body-md">Memuat data...</span>
-          </div>
-        )}
-
-        {/* Error */}
-        {!loading && error && (
+        {/* Error (getMe gagal) */}
+        {!meLoading && error && (
           <div className="flex flex-col items-start gap-stack-md rounded-xl border border-error/30 bg-error-container p-stack-lg text-on-error-container shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined">error</span>
@@ -258,8 +281,16 @@ function Dashboard() {
           </div>
         )}
 
+        {/* Skeleton saat me masih loading */}
+        {meLoading && (
+          <section className="grid grid-cols-1 gap-gutter md:grid-cols-2">
+            <SkeletonCard />
+            <SkeletonCard />
+          </section>
+        )}
+
         {/* Belum punya tabungan */}
-        {!loading && !error && !tabungan && (
+        {!meLoading && !error && !tabungan && (
           <div className="flex flex-col items-center gap-stack-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-section-gap text-center shadow-sm">
             <span className="material-symbols-outlined text-5xl text-primary-container">
               account_balance_wallet
@@ -291,7 +322,7 @@ function Dashboard() {
         )}
 
         {/* Konten utama (punya tabungan) */}
-        {!loading && !error && tabungan && (
+        {!meLoading && !error && tabungan && (
           <>
             {/* Key Cards */}
             <section className="grid grid-cols-1 gap-gutter md:grid-cols-2">
@@ -328,9 +359,33 @@ function Dashboard() {
                     <p className="font-label-sm text-label-sm text-on-surface-variant">
                       No. Rekening
                     </p>
-                    <p className="font-body-sm text-body-sm font-medium text-on-surface">
-                      {tabungan.nomorRekening}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-body-sm text-body-sm font-medium tracking-wider text-on-surface">
+                        {tampilRekening
+                          ? formatRekening(tabungan.nomorRekening)
+                          : maskRekening(tabungan.nomorRekening)}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setTampilRekening((v) => !v)}
+                        aria-label={
+                          tampilRekening
+                            ? "Sembunyikan nomor rekening"
+                            : "Tampilkan nomor rekening"
+                        }
+                        aria-pressed={tampilRekening}
+                        title={
+                          tampilRekening
+                            ? "Sembunyikan nomor rekening"
+                            : "Tampilkan nomor rekening"
+                        }
+                        className="text-on-surface-variant transition-colors hover:text-primary"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">
+                          {tampilRekening ? "visibility_off" : "visibility"}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                   <div className="rounded-full bg-primary-container/10 px-3 py-1">
                     <span className="font-label-sm text-label-sm font-semibold text-primary-container">
@@ -356,7 +411,13 @@ function Dashboard() {
                         check_circle
                       </span>
                       <h3 className="font-headline-md text-headline-md text-on-secondary-container">
-                        {estimasi ? STATUS_LABEL[estimasi.status] : "-"}
+                        {estimasiLoading ? (
+                          <SkeletonBar className="h-6 w-40" />
+                        ) : estimasi ? (
+                          STATUS_LABEL[estimasi.status]
+                        ) : (
+                          "-"
+                        )}
                       </h3>
                     </div>
                   </div>
@@ -372,9 +433,13 @@ function Dashboard() {
                       Estimasi Keberangkatan
                     </p>
                     <p className="font-headline-sm text-headline-sm text-on-surface">
-                      {estimasi?.estimasiTahunBerangkat
-                        ? `Tahun ${estimasi.estimasiTahunBerangkat}`
-                        : "Belum tersedia"}
+                      {estimasiLoading ? (
+                        <SkeletonBar className="h-5 w-28" />
+                      ) : estimasi?.estimasiTahunBerangkat ? (
+                        `Tahun ${estimasi.estimasiTahunBerangkat}`
+                      ) : (
+                        "Belum tersedia"
+                      )}
                     </p>
                   </div>
                   <div>
@@ -382,7 +447,13 @@ function Dashboard() {
                       Masa Tunggu
                     </p>
                     <p className="font-body-md text-body-md font-medium text-on-surface-variant">
-                      {estimasi ? `~${estimasi.waktuTungguTahun} Tahun` : "-"}
+                      {estimasiLoading ? (
+                        <SkeletonBar className="h-4 w-20" />
+                      ) : estimasi ? (
+                        `~${estimasi.waktuTungguTahun} Tahun`
+                      ) : (
+                        "-"
+                      )}
                     </p>
                   </div>
                 </div>
@@ -453,12 +524,26 @@ function Dashboard() {
                 </span>{" "}
                 Lihat Mutasi
               </Link>
-              <button className="flex items-center gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low">
+              {Number(tabungan.saldo) > 0 && (
+                <Link
+                  href="/tarik"
+                  className="flex items-center gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low"
+                >
+                  <span className="material-symbols-outlined text-sm">
+                    output
+                  </span>{" "}
+                  Tarik Dana
+                </Link>
+              )}
+              <Link
+                href="/estimasi"
+                className="flex items-center gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest px-6 py-3 font-label-md text-label-md text-primary-container transition-colors hover:bg-surface-container-low"
+              >
                 <span className="material-symbols-outlined text-sm">
                   calendar_month
                 </span>{" "}
                 Estimasi Haji
-              </button>
+              </Link>
             </section>
 
             {/* Recent Transactions */}
@@ -475,7 +560,9 @@ function Dashboard() {
                 </Link>
               </div>
               <div className="overflow-x-auto">
-                {transaksi.length === 0 ? (
+                {mutasiLoading ? (
+                  <SkeletonTransaksiRows />
+                ) : transaksi.length === 0 ? (
                   <p className="p-stack-lg font-body-sm text-body-sm text-on-surface-variant">
                     Belum ada transaksi.
                   </p>
@@ -518,7 +605,7 @@ function Dashboard() {
                                   {kredit ? "arrow_downward" : "arrow_upward"}
                                 </span>
                                 <span className="font-body-sm text-body-sm text-on-surface">
-                                  {kredit ? "Setoran" : t.jenis}
+                                  {JENIS_LABEL[t.jenis] ?? t.jenis}
                                 </span>
                               </div>
                             </td>
@@ -550,10 +637,10 @@ function Dashboard() {
         <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center justify-between gap-stack-md px-container-padding-desktop py-section-gap md:flex-row">
           <div className="flex flex-col items-center gap-stack-sm text-center md:items-start md:text-left">
             <span className="font-headline-sm text-headline-sm font-semibold text-primary">
-              Tabungan Haji ODP
+              BSI Tabungan Haji
             </span>
             <p className="font-body-sm text-body-sm text-on-surface">
-              © 2024 Tabungan Haji ODP. Terdaftar dan Diawasi oleh OJK. Peserta
+              © 2024 BSI Tabungan Haji. Terdaftar dan Diawasi oleh OJK. Peserta
               Penjaminan LPS.
             </p>
           </div>
@@ -573,5 +660,72 @@ function Dashboard() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function SkeletonBar({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`inline-block animate-pulse rounded bg-surface-container-highest/70 align-middle ${className}`}
+    />
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-stack-lg shadow-sm">
+      <div className="space-y-3">
+        <SkeletonBar className="h-3 w-24" />
+        <SkeletonBar className="h-8 w-48" />
+      </div>
+      <div className="mt-stack-lg flex items-center justify-between gap-stack-sm border-t border-outline-variant/50 pt-stack-md">
+        <div className="space-y-2">
+          <SkeletonBar className="h-3 w-20" />
+          <SkeletonBar className="h-4 w-32" />
+        </div>
+        <SkeletonBar className="h-6 w-16 rounded-full" />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonTransaksiRows() {
+  return (
+    <table className="w-full border-collapse text-left">
+      <thead>
+        <tr className="bg-surface-container-low">
+          <th className="p-4 font-label-sm text-label-sm uppercase text-on-surface-variant">
+            Tanggal
+          </th>
+          <th className="p-4 font-label-sm text-label-sm uppercase text-on-surface-variant">
+            Jenis
+          </th>
+          <th className="p-4 text-right font-label-sm text-label-sm uppercase text-on-surface-variant">
+            Nominal
+          </th>
+          <th className="hidden p-4 text-right font-label-sm text-label-sm uppercase text-on-surface-variant sm:table-cell">
+            Saldo
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-outline-variant/30">
+        {[0, 1, 2].map((i) => (
+          <tr key={i}>
+            <td className="p-4">
+              <SkeletonBar className="h-4 w-20" />
+            </td>
+            <td className="p-4">
+              <SkeletonBar className="h-4 w-24" />
+            </td>
+            <td className="p-4 text-right">
+              <SkeletonBar className="ml-auto h-4 w-24" />
+            </td>
+            <td className="hidden p-4 text-right sm:table-cell">
+              <SkeletonBar className="ml-auto h-4 w-28" />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

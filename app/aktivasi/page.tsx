@@ -61,7 +61,7 @@ export default function AktivasiPage() {
           >
             mosque
           </span>
-          Tabungan Haji ODP
+          BSI Tabungan Haji
         </div>
       </header>
 
@@ -82,7 +82,7 @@ export default function AktivasiPage() {
               </h1>
               <p className="mb-stack-lg font-body-sm text-body-sm text-on-surface-variant">
                 Kata sandi Anda telah diatur. Sekarang Anda dapat masuk ke akun
-                Tabungan Haji ODP menggunakan email dan kata sandi baru Anda.
+                BSI Tabungan Haji menggunakan email dan kata sandi baru Anda.
               </p>
               <button
                 onClick={() => router.push("/login")}
@@ -103,7 +103,7 @@ export default function AktivasiPage() {
                 </h1>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
                   Proses satu kali untuk memverifikasi identitas dan mengamankan
-                  akun Tabungan Haji ODP Anda.
+                  akun BSI Tabungan Haji Anda.
                 </p>
               </div>
 
@@ -310,10 +310,10 @@ export default function AktivasiPage() {
       <footer className="mx-auto mt-auto flex w-full max-w-[1200px] flex-col items-center justify-between gap-stack-md border-t border-outline-variant bg-surface-container-low px-container-padding-desktop py-section-gap md:flex-row">
         <div className="flex flex-col items-center gap-2 md:items-start">
           <div className="font-headline-sm text-headline-sm font-semibold text-primary">
-            Tabungan Haji ODP
+            BSI Tabungan Haji
           </div>
           <p className="max-w-sm text-center font-body-sm text-body-sm text-on-surface md:text-left">
-            © 2024 Tabungan Haji ODP. Terdaftar dan Diawasi oleh OJK. Peserta
+            © 2024 BSI Tabungan Haji. Terdaftar dan Diawasi oleh OJK. Peserta
             Penjaminan LPS.
           </p>
         </div>

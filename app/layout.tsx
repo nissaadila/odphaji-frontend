@@ -18,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tabungan Haji ODP",
+  title: "BSI Tabungan Haji",
   description: "Layanan tabungan haji berbasis perbankan syariah modern.",
 };
 

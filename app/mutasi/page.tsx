@@ -48,6 +48,11 @@ function formatTanggal(iso: string): string {
   return Number.isNaN(d.getTime()) ? iso : tanggalFormatter.format(d);
 }
 
+const JENIS_LABEL: Record<string, string> = {
+  SETOR: "Setoran",
+  TARIK: "Penarikan",
+};
+
 function Mutasi() {
   const router = useRouter();
   const [keluar, setKeluar] = useState(false);
@@ -101,7 +106,7 @@ function Mutasi() {
         <div className="mx-auto flex h-20 w-full max-w-[1200px] items-center justify-between px-container-padding-desktop">
           <div className="flex items-center gap-2 font-headline-md text-headline-md font-bold text-primary">
             <span>🕋</span>
-            <span>Tabungan Haji ODP</span>
+            <span>BSI Tabungan Haji</span>
           </div>
           <nav className="hidden items-center gap-6 md:flex">
             <Link
@@ -116,12 +121,12 @@ function Mutasi() {
             >
               Mutasi
             </Link>
-            <a
+            <Link
               className="rounded-md px-3 py-2 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
-              href="#"
+              href="/estimasi"
             >
               Estimasi
-            </a>
+            </Link>
           </nav>
           <div className="flex items-center gap-4">
             <button
@@ -287,12 +292,18 @@ function Mutasi() {
                                   </span>
                                   <div>
                                     <p className="font-body-sm text-body-sm text-on-surface">
-                                      {kredit ? "Setoran" : t.jenis}
+                                      {JENIS_LABEL[t.jenis] ?? t.jenis}
                                     </p>
-                                    {t.metode && (
+                                    {t.catatan ? (
                                       <p className="font-label-sm text-label-sm text-on-surface-variant">
-                                        {t.metode}
+                                        {t.catatan}
                                       </p>
+                                    ) : (
+                                      t.metode && (
+                                        <p className="font-label-sm text-label-sm text-on-surface-variant">
+                                          {t.metode}
+                                        </p>
+                                      )
                                     )}
                                   </div>
                                 </div>
@@ -326,10 +337,10 @@ function Mutasi() {
         <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center justify-between gap-stack-md px-container-padding-desktop py-section-gap md:flex-row">
           <div className="flex flex-col items-center gap-stack-sm md:items-start">
             <div className="font-headline-sm text-headline-sm font-semibold text-primary">
-              Tabungan Haji ODP
+              BSI Tabungan Haji
             </div>
             <p className="text-center font-body-sm text-body-sm text-on-surface-variant md:text-left">
-              © 2024 Tabungan Haji ODP. Terdaftar dan Diawasi oleh OJK. Peserta
+              © 2024 BSI Tabungan Haji. Terdaftar dan Diawasi oleh OJK. Peserta
               Penjaminan LPS.
             </p>
           </div>

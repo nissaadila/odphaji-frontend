@@ -9,7 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [ingatSaya, setIngatSaya] = useState(false);
+  const [ingatSaya, setIngatSaya] = useState(true);
   const [lihatSandi, setLihatSandi] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export default function LoginPage() {
         <div className="relative hidden flex-col justify-between overflow-hidden bg-surface-container-low p-10 md:flex md:w-5/12">
           <div className="z-10">
             <h1 className="flex items-center gap-2 font-headline-lg text-headline-lg text-primary">
-              <span>🕋</span> Tabungan Haji ODP
+              <span>🕋</span> BSI Tabungan Haji
             </h1>
             <p className="mt-4 max-w-xs font-body-sm text-body-sm text-on-surface-variant">
               Rencanakan perjalanan ibadah Anda dengan tenang, aman, dan
@@ -65,7 +65,7 @@ export default function LoginPage() {
           {/* Branding versi mobile */}
           <div className="mb-8 text-center md:hidden">
             <h1 className="flex items-center justify-center gap-2 font-headline-md text-headline-md text-primary">
-              <span>🕋</span> Tabungan Haji ODP
+              <span>🕋</span> BSI Tabungan Haji
             </h1>
           </div>
 

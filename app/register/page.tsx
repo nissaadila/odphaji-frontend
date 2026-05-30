@@ -81,7 +81,7 @@ export default function RegisterPage() {
               <span className="material-symbols-outlined">mosque</span>
             </span>
             <span className="font-headline-sm text-headline-sm font-bold tracking-tight">
-              Tabungan Haji ODP
+              BSI Tabungan Haji
             </span>
           </div>
 
@@ -133,7 +133,7 @@ export default function RegisterPage() {
               <span className="material-symbols-outlined">mosque</span>
             </span>
             <span className="font-headline-sm text-headline-sm font-bold">
-              Tabungan Haji ODP
+              BSI Tabungan Haji
             </span>
           </div>
 

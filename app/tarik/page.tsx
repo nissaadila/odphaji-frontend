@@ -8,19 +8,17 @@ import {
   ApiError,
   getMe,
   logout,
-  setorTabungan,
+  tarikTabungan,
   type Tabungan,
 } from "@/lib/api";
 
-export default function SetorPage() {
+export default function TarikPage() {
   return (
     <AuthGuard>
-      <Setor />
+      <Tarik />
     </AuthGuard>
   );
 }
-
-const NOMINAL_MIN = 100_000;
 
 const rupiah = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -28,7 +26,7 @@ const rupiah = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 0,
 });
 
-function formatRupiah(value: string | number): string {
+function formatRupiah(value: string | number | bigint): string {
   try {
     return rupiah.format(BigInt(value));
   } catch {
@@ -36,7 +34,7 @@ function formatRupiah(value: string | number): string {
   }
 }
 
-function Setor() {
+function Tarik() {
   const router = useRouter();
 
   const [tabungan, setTabungan] = useState<Tabungan | null>(null);
@@ -44,7 +42,8 @@ function Setor() {
   const [errorPage, setErrorPage] = useState<string | null>(null);
 
   const [nominal, setNominal] = useState<number>(0);
-  const [metode, setMetode] = useState<"qris" | "transfer">("qris");
+  const [catatan, setCatatan] = useState("");
+  const [setuju, setSetuju] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sukses, setSukses] = useState<string | null>(null);
@@ -82,8 +81,10 @@ function Setor() {
   }
 
   const saldoNum = tabungan ? Number(tabungan.saldo) : 0;
-  const valid = Number.isInteger(nominal) && nominal >= NOMINAL_MIN;
-  const estimasiSaldo = saldoNum + (nominal || 0);
+  const nominalValid = Number.isInteger(nominal) && nominal > 0;
+  const nominalCukup = nominal <= saldoNum;
+  const valid = !!tabungan && nominalValid && nominalCukup && setuju;
+  const estimasiSaldo = Math.max(0, saldoNum - (nominal || 0));
 
   async function konfirmasi(e: React.FormEvent) {
     e.preventDefault();
@@ -92,17 +93,22 @@ function Setor() {
     setSukses(null);
     setSubmitting(true);
     try {
-      const result = await setorTabungan(tabungan.id, nominal);
+      const result = await tarikTabungan(tabungan.id, {
+        nominal,
+        catatan: catatan.trim() || undefined,
+      });
       setTabungan(result.tabungan);
       setSukses(
-        `Setoran ${formatRupiah(nominal)} berhasil. Saldo terbaru: ${formatRupiah(result.tabungan.saldo)}.`,
+        `Penarikan ${formatRupiah(nominal)} berhasil. Saldo terbaru: ${formatRupiah(result.tabungan.saldo)}.`,
       );
       setNominal(0);
+      setCatatan("");
+      setSetuju(false);
     } catch (err) {
       setError(
         err instanceof ApiError
           ? err.message
-          : "Gagal melakukan setoran. Silakan coba lagi.",
+          : "Gagal melakukan penarikan. Silakan coba lagi.",
       );
     } finally {
       setSubmitting(false);
@@ -131,38 +137,8 @@ function Setor() {
             >
               Mutasi
             </Link>
-            <Link
-              className="rounded-md px-3 py-2 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
-              href="/estimasi"
-            >
-              Estimasi
-            </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <div className="flex gap-2">
-              <button
-                aria-label="Akun"
-                className="rounded-full p-2 text-primary transition-all hover:bg-surface-container-low active:scale-95"
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  account_circle
-                </span>
-              </button>
-              <button
-                aria-label="Notifikasi"
-                className="rounded-full p-2 text-primary transition-all hover:bg-surface-container-low active:scale-95"
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  notifications
-                </span>
-              </button>
-            </div>
             <button
               onClick={handleLogout}
               disabled={keluar}
@@ -180,10 +156,10 @@ function Setor() {
           {/* Header */}
           <div className="mb-stack-lg text-center">
             <h1 className="mb-stack-sm font-headline-xl-mobile text-headline-xl-mobile text-primary md:font-headline-xl md:text-headline-xl">
-              Setor Dana ke Tabungan Haji
+              Tarik Dana
             </h1>
             <p className="font-body-md text-body-md text-on-surface-variant">
-              Lanjutkan perjalanan suci Anda dengan mudah dan aman.
+              Tarik sebagian saldo tabungan haji Anda.
             </p>
           </div>
 
@@ -234,11 +210,11 @@ function Setor() {
           {/* Konten utama */}
           {!loadingPage && !errorPage && tabungan && (
             <>
-              {/* Account Info Card */}
+              {/* Saldo (read-only) */}
               <div className="mb-stack-lg flex items-center justify-between rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm">
                 <div>
                   <p className="mb-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">
-                    Rekening Tujuan
+                    Rekening
                   </p>
                   <p className="flex items-center gap-2 font-headline-sm text-headline-sm text-on-surface">
                     <span className="material-symbols-outlined text-secondary">
@@ -257,7 +233,7 @@ function Setor() {
                 </div>
               </div>
 
-              {/* Deposit Form */}
+              {/* Form */}
               <form
                 onSubmit={konfirmasi}
                 className="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm"
@@ -288,13 +264,13 @@ function Setor() {
                   </div>
                 )}
 
-                {/* Nominal Setoran */}
+                {/* Nominal Penarikan */}
                 <div className="mb-stack-lg">
                   <label
                     className="mb-stack-sm block font-label-md text-label-md text-on-surface"
                     htmlFor="nominal"
                   >
-                    Nominal Setoran
+                    Nominal Penarikan
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -312,48 +288,81 @@ function Setor() {
                         const digits = e.target.value.replace(/\D/g, "");
                         setNominal(digits ? Number(digits) : 0);
                       }}
-                      placeholder="2.500.000"
+                      placeholder="500.000"
                       className="block w-full rounded-lg border border-outline-variant bg-surface py-4 pl-12 pr-4 font-headline-md text-headline-md text-on-surface transition-all placeholder:text-outline-variant/50 focus:border-primary focus:outline-none focus:ring focus:ring-primary/20"
                     />
                   </div>
-                  <p className="mt-2 flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
-                    <span className="material-symbols-outlined text-[16px]">
-                      info
+                  {nominal > 0 && !nominalCukup ? (
+                    <p className="mt-2 flex items-center gap-1 font-body-sm text-body-sm text-error">
+                      <span className="material-symbols-outlined text-[16px]">
+                        error
+                      </span>
+                      Nominal melebihi saldo ({formatRupiah(tabungan.saldo)}).
+                    </p>
+                  ) : (
+                    <p className="mt-2 flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+                      <span className="material-symbols-outlined text-[16px]">
+                        info
+                      </span>
+                      Maksimal {formatRupiah(tabungan.saldo)}
+                    </p>
+                  )}
+                </div>
+
+                {/* Catatan (opsional) */}
+                <div className="mb-stack-lg">
+                  <label
+                    className="mb-stack-sm block font-label-md text-label-md text-on-surface"
+                    htmlFor="catatan"
+                  >
+                    Catatan{" "}
+                    <span className="font-label-sm text-on-surface-variant">
+                      (opsional)
                     </span>
-                    Minimal setoran {formatRupiah(NOMINAL_MIN)}
+                  </label>
+                  <textarea
+                    id="catatan"
+                    name="catatan"
+                    rows={3}
+                    value={catatan}
+                    onChange={(e) => setCatatan(e.target.value)}
+                    maxLength={500}
+                    placeholder="Keperluan penarikan..."
+                    className="block w-full rounded-lg border border-outline-variant bg-surface px-4 py-3 font-body-md text-body-md text-on-surface transition-all placeholder:text-outline-variant/60 focus:border-primary focus:outline-none focus:ring focus:ring-primary/20"
+                  />
+                  <p className="mt-1 text-right font-label-sm text-label-sm text-on-surface-variant">
+                    {catatan.length}/500
                   </p>
                 </div>
 
-                {/* Metode Pembayaran */}
-                <div className="mb-stack-lg">
-                  <label className="mb-stack-sm block font-label-md text-label-md text-on-surface">
-                    Metode Pembayaran
-                  </label>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <MetodeOption
-                      aktif={metode === "qris"}
-                      onClick={() => setMetode("qris")}
-                      judul="QRIS"
-                      deskripsi="Scan cepat & instan"
-                    />
-                    <MetodeOption
-                      aktif={metode === "transfer"}
-                      onClick={() => setMetode("transfer")}
-                      judul="Transfer Bank"
-                      deskripsi="Virtual Account"
-                    />
-                  </div>
-                </div>
-
-                {/* Dynamic Preview */}
+                {/* Estimasi saldo */}
                 <div className="mb-stack-lg flex items-center justify-between rounded-lg border border-outline-variant/50 bg-surface-container p-4">
                   <span className="font-body-md text-body-md text-on-surface-variant">
-                    Estimasi saldo setelah setor:
+                    Estimasi saldo setelah tarik:
                   </span>
                   <span className="font-headline-md text-headline-md text-primary-container">
                     {formatRupiah(estimasiSaldo)}
                   </span>
                 </div>
+
+                {/* Checkbox konfirmasi */}
+                <label className="mb-stack-lg flex cursor-pointer items-start gap-3 rounded-lg border border-outline-variant bg-surface-container-low p-4">
+                  <input
+                    type="checkbox"
+                    checked={setuju}
+                    onChange={(e) => setSetuju(e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-primary"
+                  />
+                  <span className="font-body-sm text-body-sm text-on-surface">
+                    Saya mengonfirmasi penarikan{" "}
+                    {nominal > 0 ? (
+                      <strong>{formatRupiah(nominal)}</strong>
+                    ) : (
+                      "sebesar nominal di atas"
+                    )}{" "}
+                    dari tabungan haji.
+                  </span>
+                </label>
 
                 {/* Action */}
                 <button
@@ -366,11 +375,11 @@ function Setor() {
                       progress_activity
                     </span>
                   )}
-                  {submitting ? "Memproses..." : "Konfirmasi Setor"}
+                  {submitting ? "Memproses..." : "Konfirmasi Tarik"}
                 </button>
               </form>
 
-              {/* Security Footer */}
+              {/* Footer info */}
               <div className="mt-stack-md text-center">
                 <p className="flex items-center justify-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
                   <span>🔒</span> Transaksi aman &amp; idempoten (anti duplikat).
@@ -393,65 +402,8 @@ function Setor() {
               Penjaminan LPS.
             </p>
           </div>
-          <nav className="flex flex-wrap justify-center gap-4">
-            {["Syarat & Ketentuan", "Kebijakan Privasi", "Hubungi Kami", "Bantuan"].map(
-              (l) => (
-                <a
-                  key={l}
-                  href="#"
-                  className="rounded-sm font-label-sm text-label-sm text-on-surface-variant underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary focus:ring-2 focus:ring-primary"
-                >
-                  {l}
-                </a>
-              ),
-            )}
-          </nav>
         </div>
       </footer>
     </div>
-  );
-}
-
-function MetodeOption({
-  aktif,
-  onClick,
-  judul,
-  deskripsi,
-}: {
-  aktif: boolean;
-  onClick: () => void;
-  judul: string;
-  deskripsi: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={aktif}
-      className={`relative flex cursor-pointer rounded-lg border p-4 text-left shadow-sm transition-colors ${
-        aktif
-          ? "border-primary bg-surface-container-low"
-          : "border-outline-variant bg-surface-container-lowest hover:border-primary/50"
-      }`}
-    >
-      <div className="flex w-full items-center justify-between">
-        <div>
-          <p className="font-headline-sm text-headline-sm text-on-surface">
-            {judul}
-          </p>
-          <div className="font-body-sm text-body-sm text-on-surface-variant">
-            {deskripsi}
-          </div>
-        </div>
-        <span
-          className={`material-symbols-outlined ${
-            aktif ? "text-primary" : "text-outline-variant"
-          }`}
-          style={aktif ? { fontVariationSettings: "'FILL' 1" } : undefined}
-        >
-          {aktif ? "check_circle" : "radio_button_unchecked"}
-        </span>
-      </div>
-    </button>
   );
 }
