@@ -347,7 +347,10 @@ function forceLogoutAndRedirect(): void {
  * `Authorization: Bearer <token>`, parse JSON, dan melempar ApiError yang ramah
  * pengguna bila gagal (termasuk token kadaluarsa/di-revoke).
  */
-async function authedFetch<T>(path: string, init?: RequestInit): Promise<T> {
+export async function authedFetch<T>(
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const token = getToken();
   if (!token) {
     forceLogoutAndRedirect();

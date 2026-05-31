@@ -206,6 +206,29 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* Aktivasi akun (untuk nasabah yang didaftarkan admin) */}
+          <Link
+            href="/aktivasi"
+            className="mt-6 flex w-full items-center justify-between rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 transition-colors hover:border-primary hover:bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <span className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary">
+                key
+              </span>
+              <span>
+                <span className="block font-label-md text-label-md text-on-surface">
+                  Sudah didaftarkan admin?
+                </span>
+                <span className="block font-body-sm text-body-sm text-on-surface-variant">
+                  Aktivasi akun untuk membuat kata sandi
+                </span>
+              </span>
+            </span>
+            <span className="material-symbols-outlined text-on-surface-variant">
+              arrow_forward
+            </span>
+          </Link>
+
           {/* Footer */}
           <div className="mt-8 text-center">
             <p className="font-body-sm text-body-sm text-on-surface-variant">

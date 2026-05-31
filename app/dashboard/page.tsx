@@ -217,6 +217,14 @@ function Dashboard() {
             >
               Estimasi
             </Link>
+            {me?.isAdmin && (
+              <Link
+                className="font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
+                href="/nasabah"
+              >
+                Kelola Nasabah
+              </Link>
+            )}
           </nav>
           {/* Actions */}
           <div className="flex items-center gap-4">
